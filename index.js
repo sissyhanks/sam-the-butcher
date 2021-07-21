@@ -20,7 +20,7 @@ function mainMenu(){
       type:"list",
       message:"What would you like to do ?",
       name:"useroption",
-      choices:["View Employees","View Positions","View Departments","Update Employee Position","View Employees by Manager","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
+      choices:["View Employees","View Roles","View Departments","Update Employee Position","View Employees by Manager","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
     }
   ]).then(function({useroption}){
     console.log(useroption)
@@ -49,6 +49,14 @@ function mainMenu(){
 
 function viewEmployees(){
   connection.query("SELECT e.id, e.first_name, e.last_name, d.department, r.title, r.salary FROM employee e INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.last_name;", function(err, data){
+    if(err) throw err;
+    console.table(data);
+    mainMenu();
+  });
+}
+
+function viewRoles(){
+  connection.query("SELECT r.title, d.department, r.salary FROM role r INNER JOIN department d ON r.department_id = d.id ORDER BY r.title;", function(err, data){
     if(err) throw err;
     console.table(data);
     mainMenu();
