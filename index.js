@@ -64,7 +64,7 @@ function viewRoles(){
 }
 
 function viewDepartment(){
-  connection.query("SELECT * FROM department",function(err, data){
+  connection.query("SELECT department FROM department;",function(err, data){
     if(err) throw err;
     console.table(data);
     mainMenu();
