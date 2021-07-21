@@ -27,7 +27,7 @@ function mainMenu(){
       type:"list",
       message:"What would you like to do ?",
       name:"useroption",
-      choices:["View Department","View Positions","View Employee","Add Employee","Add Roll","Exit"]
+      choices:["View Employees","View Employees by Department","View Employees by Positions","Update Employee Position","View Employees by Manager","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
     }
   ]).then(function({useroption}){
     console.log(useroption)
@@ -38,8 +38,8 @@ function mainMenu(){
       case "Add Employee":
           addEmployee();
           break;
-      case "Add Roll":
-        addRoll();
+      case "Add Role":
+        adde();
         break;
       default:
           connection.end();
@@ -119,13 +119,13 @@ function addEmployee(){
   })
 }
 
-function addRoll(){
+function addRole(){
   connection.query("select * from department",function(err, results){
     if(err) throw err;
     let departmentDB = results.map(department => {
       return({
         value: department.id,
-        name: department.name
+        name: department.department
       })
     })
     inquirer.prompt([
@@ -150,7 +150,7 @@ function addRoll(){
       
     ]).then(function(response){
       console.log(response);
-      connection.query("INSERT INTO role (title,slary,department_id) VALUES (?,?,?);",[response.title,response.salary,response.departmentid],function(err,data){
+      connection.query("INSERT INTO role (title,salary,department_id) VALUES (?,?,?);",[response.title,response.salary,response.departmentid],function(err,data){
         if(err) throw err;
         console.table(data);
         mainMenu()
