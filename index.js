@@ -11,14 +11,7 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-connection.query('SELECT * FROM role JOIN department ON role.department_id = department.id JOIN employee ON role.id = employee.role_id', function (error, results) {
-  if (error) throw error;
-  connection.connect((err) => {
-    console.log("welcome to my tracker!")
-    console.table(results);
-    mainMenu();
-  });
-});
+mainMenu();
 
 
 function mainMenu(){
@@ -27,12 +20,18 @@ function mainMenu(){
       type:"list",
       message:"What would you like to do ?",
       name:"useroption",
-      choices:["View Employees","View Employees by Department","View Employees by Positions","Update Employee Position","View Employees by Manager","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
+      choices:["View Employees","View Positions","View Departments","Update Employee Position","View Employees by Manager","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
     }
   ]).then(function({useroption}){
     console.log(useroption)
     switch(useroption){
-      case "View Department":
+      case "View Employees":
+        viewEmployees();
+        break;
+      case "View Roles":
+        viewRoles();
+        break;
+      case "View Departments":
           viewDepartment();
           break;
       case "Add Employee":
@@ -48,11 +47,19 @@ function mainMenu(){
   })
 }
 
+function viewEmployees(){
+  connection.query("SELECT e.id, e.first_name, e.last_name, d.department, r.title, r.salary FROM employee e INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.last_name;", function(err, data){
+    if(err) throw err;
+    console.table(data);
+    mainMenu();
+  });
+}
+
 function viewDepartment(){
   connection.query("SELECT * FROM department",function(err, data){
     if(err) throw err;
     console.table(data);
-    mainMenu()
+    mainMenu();
   })
 }
 
