@@ -27,7 +27,7 @@ function mainMenu(){
       type:"list",
       message:"What would you like to do ?",
       name:"useroption",
-      choices:["View Department","View Positions","View Employee","Add Employee","Exit"]
+      choices:["View Department","View Positions","View Employee","Add Employee","Add Roll","Exit"]
     }
   ]).then(function({useroption}){
     console.log(useroption)
@@ -38,6 +38,9 @@ function mainMenu(){
       case "Add Employee":
           addEmployee();
           break;
+      case "Add Roll":
+        addRoll();
+        break;
       default:
           connection.end();
           process.exit(0);
@@ -108,6 +111,46 @@ function addEmployee(){
     ]).then(function(response){
       console.log(response);
       connection.query("Insert into employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?);",[response.firstName,response.lastName,response.roleid,response.managerid],function(err,data){
+        if(err) throw err;
+        console.table(data);
+        mainMenu()
+      })
+    })
+  })
+}
+
+function addRoll(){
+  connection.query("select * from department",function(err, results){
+    if(err) throw err;
+    let departmentDB = results.map(department => {
+      return({
+        value: department.id,
+        name: department.name
+      })
+    })
+    inquirer.prompt([
+      {
+        type:"input",
+        name:"title",
+        message:"Enter Title "
+      },
+      {
+        type:"input",
+        name:"salary",
+        message: "enter salary"
+      },
+      {
+        type:"list",
+        name:"departmentid",
+        message:"Choose department",
+        choices: departmentDB
+      },
+      
+    
+      
+    ]).then(function(response){
+      console.log(response);
+      connection.query("INSERT INTO role (title,slary,department_id) VALUES (?,?,?);",[response.title,response.salary,response.departmentid],function(err,data){
         if(err) throw err;
         console.table(data);
         mainMenu()
