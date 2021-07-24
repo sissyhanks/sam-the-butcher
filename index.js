@@ -28,21 +28,41 @@ function mainMenu(){
       case "View Employees":
         viewEmployees();
         break;
+      case "View Employees by manager":
+        viewByManager();
+        break;
       case "View Roles":
         viewRoles();
         break;
+      case "Update Employee Role":
+        updateRole();
+        break;
       case "View Departments":
-          viewDepartment();
-          break;
+        viewDepartment();
+        break;
+      case "View the total utilized budget of a department":
+        viewBudget();
       case "Add Employee":
-          addEmployee();
-          break;
+        addEmployee();
+        break;
       case "Add Role":
-        adde();
+        addRole();
+        break;
+      case "Add Department":
+        addDepartment();
+        break;
+      case "Delete Employee":
+        deleteEmployee();
+        break;
+      case "Delete Role":
+        deleteRole();
+        break;
+      case "Delete Department":
+        deleteDepartment();
         break;
       default:
-          connection.end();
-          process.exit(0);
+        connection.end();
+        process.exit(0);
     }
   })
 }
