@@ -20,7 +20,7 @@ function mainMenu(){
       type:"list",
       message:"What would you like to do ?",
       name:"useroption",
-      choices:["View Employees","View Roles","View Departments","Update Employee Position","View Employees by Manager","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
+      choices:["View Employees","View Employees by Manager","View Roles","Update Employee Role","View Departments","View the total utilized budget of a department","Update Employee Position","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
     }
   ]).then(function({useroption}){
     console.log(useroption)
@@ -28,7 +28,7 @@ function mainMenu(){
       case "View Employees":
         viewEmployees();
         break;
-      case "View Employees by manager":
+      case "View Employees by Manager":
         viewByManager();
         break;
       case "View Roles":
@@ -68,7 +68,15 @@ function mainMenu(){
 }
 
 function viewEmployees(){
-  connection.query("SELECT e.id, e.first_name, e.last_name, d.department, r.title, r.salary FROM employee e INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.last_name;", function(err, data){
+  connection.query("SELECT e.eid, e.first_name, e.last_name, d.department, r.title, r.salary FROM employee e INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.last_name;", function(err, data){
+    if(err) throw err;
+    console.table(data);
+    mainMenu();
+  });
+}
+
+function viewByManager(){
+  connection.query("SELECT CONCAT(m.last_name, ', ', m.first_name) AS Manager, CONCAT(e.last_name, ', ', e.first_name) AS `Direct report` FROM employee e INNER JOIN employee m ON m.eid = e.manager_id ORDER BY Manager;", function(err, data){
     if(err) throw err;
     console.table(data);
     mainMenu();
@@ -81,6 +89,47 @@ function viewRoles(){
     console.table(data);
     mainMenu();
   });
+}
+
+function updateRole(){
+connection.query("SELECT employee.eid, employee.first_name, employee.last_name, employee.role_id, role.title, role.id FROM employee  INNER JOIN role  ON employee.role_id = role.id;", function(err, results){
+    if(err) throw err;
+    let employeeChange = results.map(employee => {
+      return({
+        value: employee.eid,
+        name: (employee.first_name + ' '+ employee.last_name + ' ' + employee.eid)
+      })
+    });
+    let newRole = results.map(role => {
+      return({
+        value: role.id,
+        name: role.title
+      })
+    });
+    inquirer.prompt([
+      {
+        type:"list",
+        name:"employee",
+        message: "Who's role would you like to update?",
+        choices: employeeChange
+      },
+      {
+        type:"list",
+        name:"newRole",
+        message:"What role would you like to move them into?",
+        choices: newRole
+      }
+    ]).then(function(response){
+      console.log(response);
+      connection.query("UPDATE employee SET employee.role_id = ? WHERE employee.eid = ?;",
+      [response.newRole, response.employee], 
+      function(err, data){
+        if(err) throw err;
+        console.table(data);
+        mainMenu()
+      })
+    })
+  })
 }
 
 function viewDepartment(){
@@ -145,7 +194,9 @@ function addEmployee(){
       
     ]).then(function(response){
       console.log(response);
-      connection.query("Insert into employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?);",[response.firstName,response.lastName,response.roleid,response.managerid],function(err,data){
+      connection.query("Insert into employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?);",
+      [response.firstName, response.lastName, response.roleid,response.managerid],
+      function(err,data){
         if(err) throw err;
         console.table(data);
         mainMenu()
