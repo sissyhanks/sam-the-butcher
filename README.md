@@ -1,8 +1,8 @@
 # MySQL Employee Tracker
 
-![tests pass](/assets/test.png)
+![tests pass](/assets/tracker.png)
 
-[VIDEO DEMO](https://youtu.be/ou1GfyM84Fg)
+[VIDEO DEMO](https://www.youtube.com/watch?v=2thS85Q71Q0)
 
 ![BADGE](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -10,15 +10,12 @@
 
 - [Description](#description)
 - [Installation](#installation)
-- [Test](#test)
-- [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
 ## Description
 
-This Node.js command-line application is for engineering team managers who want an an HTML webpage that displays information for each member of their team.
+This Node.js command-line application can be used to update and track employee information. Add departments, add and update roles, enter new employees, view all information as well as department budgets and employees by manager.
 
 ![html example](/assets/html.png)
 
@@ -26,19 +23,7 @@ This Node.js command-line application is for engineering team managers who want 
 
 ## Installation
 
-Clone this repo and open in a Node.js runtime environment. a package.json with required dependencies is included with repo, so simply install rpm and open index.js in the node terminal to initiate app. HTML file will be written to the dist folder.
-
-## Test
-
-Tests for this project are written in jest and can be run from the node terminal once npm has been installed.
-
-## Usage
-
-this app can be used by managers and even people who are not managers, as long as they have all team member information.
-
-## Contributing
-
-Please open an issue if you are interested in contributing to this project.
+Clone this repo and open in a Node.js runtime environment where mySQL is also installed. Update credentials starting on line 8 of teh index.js file to ensure a MYsql server connection. A package.json with required dependencies is included with repo, so simply install rpm and open index.js in the node terminal to initiate app. Use the inquirer driven interface in the terminal to set up departments, roles and employees, or see setup in schema.sql to create seed commands or csv files to enter existing employee information.
 
 ## License
 
