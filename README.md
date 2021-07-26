@@ -1,6 +1,6 @@
 # MySQL Employee Tracker
 
-![tests pass](/assets/tracker.png)
+![tracker](./assets/tracker.png)
 
 [VIDEO DEMO](https://www.youtube.com/watch?v=2thS85Q71Q0)
 
@@ -16,10 +16,6 @@
 ## Description
 
 This Node.js command-line application can be used to update and track employee information. Add departments, add and update roles, enter new employees, view all information as well as department budgets and employees by manager.
-
-![html example](/assets/html.png)
-
-[example of executed HTML page](https://sissyhanks.github.io/make-the-dream-work/)
 
 ## Installation
 
