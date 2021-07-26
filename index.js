@@ -137,7 +137,7 @@ connection.query("SELECT employee.eid, employee.first_name, employee.last_name, 
       [response.newRole, response.employee], 
       function(err, data){
         if(err) throw err;
-        console.table(data);
+        viewEmployees();
         mainMenu()
       })
     })
@@ -223,7 +223,7 @@ function addEmployee(){
       [response.firstName, response.lastName, response.roleid, response.managerid],
       function(err,data){
         if(err) throw err;
-        console.table(data);
+        viewEmployees();
         mainMenu()
       })
     })
@@ -231,7 +231,7 @@ function addEmployee(){
 }
 
 function addRole(){
-  connection.query("select * from department",function(err, results){
+  connection.query("select * from department", function(err, results){
     if(err) throw err;
     let departmentDB = results.map(department => {
       return({
@@ -260,9 +260,27 @@ function addRole(){
       console.log(response);
       connection.query("INSERT INTO role (title,salary,department_id) VALUES (?,?,?);",[response.title,response.salary,response.departmentid],function(err,data){
         if(err) throw err;
-        console.table(data);
-        mainMenu()
+        viewRoles();
+        mainMenu();
       })
     })
+  })
+}
+
+function addDepartment(){
+    inquirer.prompt([
+      {
+        type:"input",
+        name:"newDpt",
+        message:"Enter the name of the department you would like to add."
+      }
+    ]).then(function(response){
+      console.log(response);
+      connection.query("INSERT INTO department (department) VALUE (?)", [response.newDpt],
+      function(err, data){
+        if(err) throw err;
+        viewDepartment();
+        mainMenu();
+      })
   })
 }
