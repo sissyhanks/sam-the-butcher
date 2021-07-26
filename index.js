@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const CFonts = require('cfonts');
 
 const mysql = require('mysql');
 
@@ -14,8 +15,19 @@ const connection = mysql.createConnection({
 //conect to mysql server
 connection.connect();
 
-//starts program
+function init(){
+  CFonts.say('Employee|Tracker', {
+	font: 'tiny',              // define the font face
+	align: 'left',              // define text alignment
+	colors: ['yellowBright'],         // define all colors
+
+	env: 'node'                 // define the environment CFonts is being executed in
+});
 mainMenu();
+}
+
+//starts program
+// mainMenu();
 
 //presents user with program options 
 function mainMenu(){
@@ -284,3 +296,5 @@ function addDepartment(){
       })
   })
 }
+
+init();
