@@ -12,9 +12,10 @@ const connection = mysql.createConnection({
   database : 'business'
 });
 
-//conect to mysql server
+//connect to mysql server
 connection.connect();
 
+//display header & start application
 function init(){
   CFonts.say('Employee|Tracker', {
 	font: 'tiny',              // define the font face
@@ -26,9 +27,6 @@ function init(){
 mainMenu();
 }
 
-//starts program
-// mainMenu();
-
 //presents user with program options 
 function mainMenu(){
   inquirer.prompt([
@@ -36,7 +34,7 @@ function mainMenu(){
       type:"list",
       message:"What would you like to do ?",
       name:"useroption",
-      choices:["View Employees","View Employees by Manager","View Roles","Update Employee Role","View Departments","View the total utilized budget of a department","Update Employee Position","Update Employee Manager","Add Employee","Add Role","Add Department","Exit"]
+      choices:["View Employees","View Employees by Manager","View Roles","Update Employee Role","View Departments","View the total utilized budget of a department","Add Employee","Add Role","Add Department","Exit"]
     }
   ]).then(function({useroption}){
     console.log(useroption)
@@ -56,8 +54,9 @@ function mainMenu(){
       case "View Departments":
         viewDepartment();
         break;
-      case "View the total utilized budget of a department":
+        case "View the total utilized budget of a department":
         viewBudget();
+        break;
       case "Add Employee":
         addEmployee();
         break;
@@ -66,15 +65,6 @@ function mainMenu(){
         break;
       case "Add Department":
         addDepartment();
-        break;
-      case "Delete Employee":
-        deleteEmployee();
-        break;
-      case "Delete Role":
-        deleteRole();
-        break;
-      case "Delete Department":
-        deleteDepartment();
         break;
       default:
         connection.end();
@@ -149,7 +139,6 @@ connection.query("SELECT employee.eid, employee.first_name, employee.last_name, 
       [response.newRole, response.employee], 
       function(err, data){
         if(err) throw err;
-        viewEmployees();
         mainMenu()
       })
     })
@@ -164,29 +153,35 @@ function viewDepartment(){
   })
 }
 
-// function viewBudget(){
-//   connection.query("SELECT department.id, department.department, role.salary, role.department_id FROM department INNER JOIN role  ON role.department_id = department.id;", function(err, results){
-//     if(err) throw err;
-//     let department = result.map(department => {
-//       return({
-//         value: department.id,
-//         name: department.department
-//       })
-//     });
-//     inquirer.prompt([
-//       {
-//         title:"list",
-//         name:"budgetCheck",
-//         message:"Which department's budget would you like to view?",
-//         choices: department
-//       }
-//     ]),then(function(response){
-//       console.log(response);
-//       connection.query("")
-//     })
-//   })
-// }
+function viewBudget(){
+  connection.query("Select * FROM department;", 
+  function(err, results){
+    if(err) throw err;
+    let department = results.map(department => {
+      return({
+        value: department.id,
+        name: department.department
+      })
+    });
+    inquirer.prompt([
+      {
+        type:"list",
+        name:"budgetCheck",
+        message:"Which department's budget would you like to view?",
+        choices: department
+      }
+    ]).then(function(response){
+      connection.query("SELECT department, id, (SELECT SUM(salary) FROM role WHERE department_id = ?) as Department_Total FROM department WHERE id = ?;", [response.budgetCheck, response.budgetCheck],
+      function(err, data){
+        if(err) throw err;
+        console.table(data);
+        mainMenu();
+      });
+    });
+  });
+}
 
+//joins information from two tables with different columns, inserts null in cells that are not a part of original table, uses flatMap to prevent null values from being returned
 function addEmployee(){
   connection.query("SELECT role.title, role.id, null as manager_id, null as Manager FROM role UNION ALL SELECT DISTINCT null as id, null as title, employee.manager_id, CONCAT( m.first_name, + ' ', m.last_name) AS Manager FROM employee INNER JOIN employee m ON m.eid = employee.manager_id;",function(err, results){
     if(err) throw err;
@@ -235,7 +230,6 @@ function addEmployee(){
       [response.firstName, response.lastName, response.roleid, response.managerid],
       function(err,data){
         if(err) throw err;
-        viewEmployees();
         mainMenu()
       })
     })
@@ -272,7 +266,6 @@ function addRole(){
       console.log(response);
       connection.query("INSERT INTO role (title,salary,department_id) VALUES (?,?,?);",[response.title,response.salary,response.departmentid],function(err,data){
         if(err) throw err;
-        viewRoles();
         mainMenu();
       })
     })
@@ -291,7 +284,6 @@ function addDepartment(){
       connection.query("INSERT INTO department (department) VALUE (?)", [response.newDpt],
       function(err, data){
         if(err) throw err;
-        viewDepartment();
         mainMenu();
       })
   })
